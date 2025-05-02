@@ -43,9 +43,9 @@ export default function UserFormPage({ params }: PageProps) {
         setValue('fullname', user.fullname);
         setValue('email', user.email);
         setValue('password', '');
+        setFocus('fullname')
       })
     }
-    setFocus('fullname')
   }, [getUser, setValue, isNew, id]);
 
   const resetForm = () => {
