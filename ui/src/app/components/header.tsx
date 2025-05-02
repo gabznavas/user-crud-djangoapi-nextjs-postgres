@@ -12,17 +12,17 @@ export default function Header() {
   }
 
   return (
-    <header className="flex justify-between items-center p-4">
+    <header className="flex justify-between items-center p-4 bg-blue-900">
       <div className="flex items-center gap-4">
         <div>
-          <span>CRUD User</span>
+          <span className="text-white font-bold">CRUD</span>
         </div>
       </div>
 
       {
         isAuthenticated ? (
           <div className="flex items-center gap-4">
-            <button className="bg-blue-900 text-white px-4 py-2 rounded-md hover:bg-red transition-colors cursor-pointer" onClick={handleLogout}>Logout</button>
+            <button className="cursor-pointer bg-gray-200 text-black px-4 py-2 rounded-md hover:bg-gray-300" onClick={handleLogout}>Logout</button>
           </div>
         ) : (
           <div className="flex items-center gap-4">

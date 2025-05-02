@@ -16,7 +16,8 @@ export default function useLogin() {
     setSuccess(null);
 
     try {
-      const response = await fetch('http://localhost:8000/api/login/', {
+      const url = process.env.NEXT_PUBLIC_API_URL + '/login/';
+      const response = await fetch(url, {
         method: 'POST',
         body: JSON.stringify({ email, password }),
         headers: {
@@ -33,7 +34,7 @@ export default function useLogin() {
       } else {
         setError('Email ou senha inválidos');
       }
-    } catch (error) {
+    } catch {
       setError('Erro ao fazer login');
     } finally {
       setIsLoading(false);

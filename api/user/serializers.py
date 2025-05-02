@@ -25,7 +25,7 @@ class UserSerializer(serializers.Serializer):
     fullname = serializers.CharField(max_length=200, required=True)
 
     allowed_domains = ['gmail.com', 'hotmail.com']
-    
+
     def validate_password(self, value):
         if len(value) < min_password_length:
             raise serializers.ValidationError(f"Password must be at least {min_password_length} characters long")

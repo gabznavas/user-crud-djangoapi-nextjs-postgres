@@ -16,7 +16,7 @@ class AuthUseCase:
 
         user = authenticate(email=user_data['email'], password=user_data['password'])
         if user is None:
-            return None, {'error': 'Invalid credentials'}
+            return None, {'details': 'Credenciais inválidas.'}
         
         token_jwt = self.__get_jwt_token(user_data)
 
@@ -31,7 +31,7 @@ class AuthUseCase:
 
         user_by_email = User.objects.filter(email=user_data['email']).first()
         if user_by_email:
-            return None, {'error': 'User already exists'}   
+            return None, {'details': 'Usuário já existe com esse e-mail.'}   
         
         user = User.objects.create(
             email=user_data['email'],

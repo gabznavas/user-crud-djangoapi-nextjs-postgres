@@ -25,7 +25,10 @@ class UserManagementUseCase:
             if not user.is_active:
                 raise User.DoesNotExist
         except User.DoesNotExist:
-            return {'error': 'User not found'}
+            return {'details': 'Usuário não encontrado.'}
+        
+        if not user.is_active:
+            return {'details': 'Usuário não está ativo.'}
 
         serializer = UserSerializer(user, data=user_data)
         if not serializer.is_valid():
@@ -33,7 +36,7 @@ class UserManagementUseCase:
         
         user_by_email = User.objects.filter(email=user_data['email']).first()
         if user_by_email and user_by_email.id != user_id:
-            return {'error': 'Email already exists'}
+            return {'details': 'E-mail já está em uso.'}
         
         user.fullname = user_data['fullname']
         user.email = user_data['email']
@@ -48,7 +51,10 @@ class UserManagementUseCase:
             if not user.is_active:
                 raise User.DoesNotExist
         except User.DoesNotExist:
-            return {'error': 'User not found'}
+            return {'details': 'Usuário não encontrado.'}
+        
+        if User.objects.filter(is_active=True).count() == 1:
+            return {'details': 'Não é possível deletar o único usuário existente.'}
         
         user.is_active = False
         user.save()
