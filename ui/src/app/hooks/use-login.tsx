@@ -10,7 +10,7 @@ export default function useLogin() {
 
   const { setToken } = useToken();
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
     setError(null);
     setSuccess(null);
@@ -31,11 +31,14 @@ export default function useLogin() {
         setToken(token)
 
         setSuccess('Login realizado com sucesso');
+        return true;
       } else {
         setError('Email ou senha inválidos');
+        return false;
       }
     } catch {
       setError('Erro ao fazer login');
+      return false;
     } finally {
       setIsLoading(false);
     }

@@ -6,7 +6,9 @@ export default function UsersLayout({ children }: { children: React.ReactNode })
   return (
     <div>
       <Header />
-      {children}
+      <div className="p-4">
+        {children}
+      </div>
     </div>
   )
 }

@@ -47,7 +47,7 @@ export default function UsersPage() {
         </button>
       </div>
 
-      {isLoading && <div className="p-4">Carregando...</div>}
+      {isLoading && <div className='bg-gray-100 p-4 rounded-md mb-4'>Carregando...</div>}
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
           {error}

@@ -17,24 +17,34 @@ export default function useUser() {
   const { token } = useToken();
 
   const getUsers = async (): Promise<User[]> => {
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/user`;
-    const response = await fetch(url, {
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${token}`
-      }
-    });
+    setIsLoading(true);
+    try {
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/user`;
+      const response = await fetch(url, {
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
 
-    if (!response.ok) {
-      const data = await response.json();
-      if (data.details) {
-        throw new Error(data.details);
-      } else {
-        throw new Error('Erro ao carregar usuários');
+      if (!response.ok) {
+        const data = await response.json();
+        if (data.details) {
+          throw new Error(data.details);
+        } else {
+          throw new Error('Erro ao carregar usuários');
+        }
       }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      setError(error instanceof Error
+        ? error.message
+        : 'Erro ao carregar usuários');
+      return [];
+    } finally {
+      setIsLoading(false);
     }
-    const data = await response.json();
-    return data;
   }
 
   const getUser = async (id: string): Promise<User> => {

@@ -26,12 +26,14 @@ export default function LoginPage() {
   });
 
   const onSubmit = async (data: Form) => {
-    await login(data.email, data.password);
-    router.push('/users');
+    const isLogin = await login(data.email, data.password);
+    if (isLogin) {
+      router.push('/users');
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex pt-12 justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
@@ -87,7 +89,7 @@ export default function LoginPage() {
           </div>
 
           <div>
-            {isLoading && <p>Carregando...</p>}
+            {isLoading && <p className="text-gray-500 p-2 bg-gray-100 rounded-md mb-2">Carregando...</p>}
             {error && <p className="text-red-500 p-2 bg-red-100 rounded-md mb-2">{error}</p>}
             {success && <p className="text-green-500 p-2 bg-green-100 rounded-md mb-2">{success}</p>}
             <button
