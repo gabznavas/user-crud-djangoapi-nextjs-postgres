@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react";
-
+import Header from "../components/header";
 export default function LoginLayout({
   children,
 }: {
@@ -14,6 +14,7 @@ export default function LoginLayout({
 
   return (
     <div>
+      <Header />
       {children}
     </div>
   )

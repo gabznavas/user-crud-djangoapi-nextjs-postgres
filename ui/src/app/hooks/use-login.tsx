@@ -1,11 +1,14 @@
 'use client';
 
 import { useState } from "react";
+import useToken from "./use-token";
 
 export default function useLogin() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  const { setToken } = useToken();
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
@@ -24,7 +27,7 @@ export default function useLogin() {
 
       if (response.ok) {
         const { token } = await response.json();
-        localStorage.setItem('token', token);
+        setToken(token)
 
         setSuccess('Login realizado com sucesso');
       } else {
