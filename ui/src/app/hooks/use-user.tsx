@@ -69,6 +69,28 @@ export default function useUser() {
     }
   }
 
+  const getUserLogged = async (): Promise<User> => {
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/user/logged/`;
+    const response = await fetch(url, {
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      if (data.details) {
+        throw new Error(data.details);
+      } else {
+        throw new Error('Erro ao carregar usuário');
+      }
+    } else {
+      const data = await response.json();
+      return data;
+    }
+  }
+
   const createUser = async (email: string, fullname: string, password: string): Promise<void> => {
     reset()
 
@@ -167,6 +189,7 @@ export default function useUser() {
     createUser,
     updateUser,
     deleteUser,
+    getUserLogged,
     isLoading,
     error,
     success

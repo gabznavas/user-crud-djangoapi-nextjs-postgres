@@ -2,18 +2,28 @@
 
 import { useEffect, useState } from "react";
 
+const tokenKey = 'token';
+
 export default function useToken() {
   const [token, setTokenState] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem(tokenKey);
     if (token) {
       setTokenState(token);
     }
   }, []);
 
+  const getToken = () => {
+    const token = localStorage.getItem(tokenKey);
+    if (token) {
+      setTokenState(token);
+    }
+    return token;
+  }
+
   const setToken = (token: string) => {
-    localStorage.setItem('token', token);
+    localStorage.setItem(tokenKey, token);
     setTokenState(token);
   }
 
@@ -21,5 +31,10 @@ export default function useToken() {
     localStorage.clear();
   }
 
-  return { token, isAuthenticated: !!token, setToken, logout };
+  return {
+    token: !token ? getToken() : token,
+    isAuthenticated: !!token,
+    setToken,
+    logout
+  };
 }

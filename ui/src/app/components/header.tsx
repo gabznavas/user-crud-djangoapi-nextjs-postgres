@@ -1,11 +1,25 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import useToken from '../hooks/use-token';
-
+import useUser, { User } from '../hooks/use-user';
+import { useEffect, useState } from 'react';
 export default function Header() {
   const router = useRouter();
   const { isAuthenticated, logout } = useToken();
+
+  const { isLoading, error, success, getUserLogged } = useUser();
+
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      (async () => {
+        const user = await getUserLogged();
+        setUser(user);
+      })();
+    }
+  }, [isAuthenticated]);
 
   const handleLogout = () => {
     logout();
@@ -23,6 +37,10 @@ export default function Header() {
           <div className="flex items-center space-x-4">
             {isAuthenticated ? (
               <>
+                <span className="text-gray-600 italic ">
+                  {user && `Bem-vindo, ${user?.fullname}`}
+                  {isLoading && 'Carregando...'}
+                </span>
                 <button
                   onClick={() => router.push('/users')}
                   className="cursor-pointer text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
@@ -37,16 +55,39 @@ export default function Header() {
                 </button>
               </>
             ) : (
-              <button
-                onClick={() => router.push('/login')}
-                className="text-indigo-600 hover:text-indigo-900 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Entrar
-              </button>
+              <AuthButtons />
             )}
           </div>
         </div>
       </div>
     </header>
   );
+}
+
+const AuthButtons = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  console.log(pathname);
+
+  if (pathname === '/login') {
+    return (
+      <button
+        onClick={() => router.push('/register')}
+        className="cursor-pointer text-indigo-600 hover:text-indigo-900 px-3 py-2 rounded-md text-sm font-medium"
+      >
+        Registrar
+      </button>
+    )
+  }
+
+
+  return (
+    <button
+      onClick={() => router.push('/login')}
+      className="cursor-pointer text-indigo-600 hover:text-indigo-900 px-3 py-2 rounded-md text-sm font-medium"
+    >
+      Entre com sua conta
+    </button>
+  )
 }

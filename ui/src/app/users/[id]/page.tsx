@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import useUser from '@/app/hooks/use-user';
+import useUserValidation from '@/app/hooks/use-user-validation';
 
 type UserForm = {
   fullname: string;
@@ -29,6 +30,8 @@ export default function UserFormPage({ params }: PageProps) {
   const {
     getUser, createUser, updateUser, isLoading, error, success
   } = useUser();
+
+  const { validateUser } = useUserValidation();
 
   const {
     register, handleSubmit, formState: { errors }, setValue, setFocus
@@ -54,36 +57,10 @@ export default function UserFormPage({ params }: PageProps) {
   }
 
   const onSubmit = (data: UserForm) => {
-    const allowedDomains = ['gmail.com', 'hotmail.com']
-    const emailDomain = data.email.split('@')[1];
-    if (!allowedDomains.includes(emailDomain)) {
-      setGlobalError('Domínio de email não permitido.');
+    const validationError = validateUser(data.email, data.fullname, data.password);
+    if (validationError) {
+      setGlobalError(validationError);
       return;
-    }
-
-    if (data.password.length < 8) {
-      setGlobalError('A senha deve ter no mínimo 8 caracteres');
-      return;
-    }
-    if (data.password.length > 72) {
-      setGlobalError('A senha deve ter no máximo 72 caracteres');
-      return;
-    }
-
-    const names = data.fullname.split(' ');
-    if (names.length < 2) {
-      setGlobalError('O nome deve ter no mínimo 2 nomes');
-      return;
-    }
-    for (const name of names) {
-      if (name.length < 2) {
-        setGlobalError('Cada nome deve ter no mínimo 2 caracteres');
-        return;
-      }
-      if (name.length > 50) {
-        setGlobalError('Cada nome deve ter no máximo 50 caracteres');
-        return;
-      }
     }
 
     if (isNew) {
