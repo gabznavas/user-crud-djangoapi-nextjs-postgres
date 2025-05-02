@@ -1,13 +1,17 @@
+'use client';
+
 import { useState } from "react";
 import useToken from "./use-token";
+import { PaginatedList } from "./types";
 
 export type User = {
   id: number;
   fullname: string;
   email: string;
-  created_at: string;
-  updated_at: string;
+  createdAt: string;
+  updatedAt: string;
 }
+
 
 export default function useUser() {
   const [isLoading, setIsLoading] = useState(false);
@@ -16,10 +20,11 @@ export default function useUser() {
 
   const { token } = useToken();
 
-  const getUsers = async (): Promise<User[]> => {
+  const getUsers = async (page: number = 1, pageSize: number = 10, query: string = ''): Promise<PaginatedList<User>> => {
     setIsLoading(true);
     try {
-      const url = `${process.env.NEXT_PUBLIC_API_URL}/user`;
+      const url =
+        `${process.env.NEXT_PUBLIC_API_URL}/user?page=${page}&page_size=${pageSize}&query=${query}`;
       const response = await fetch(url, {
         headers: {
           'Accept': 'application/json',
@@ -36,12 +41,32 @@ export default function useUser() {
         }
       }
       const data = await response.json();
-      return data;
+      return {
+        data: data.data as User[],
+        page: data.page,
+        pageSize: data.page_size,
+        total: data.total,
+        totalPages: data.total_pages,
+        hasNext: data.has_next,
+        hasPrevious: data.has_previous,
+        next: data.next,
+        previous: data.previous
+      };
     } catch (error) {
       setError(error instanceof Error
         ? error.message
         : 'Erro ao carregar usuários');
-      return [];
+      return {
+        data: [],
+        page: 1,
+        pageSize: 10,
+        total: 0,
+        totalPages: 0,
+        hasNext: false,
+        hasPrevious: false,
+        next: null,
+        previous: null
+      };
     } finally {
       setIsLoading(false);
     }
@@ -65,7 +90,13 @@ export default function useUser() {
       }
     } else {
       const data = await response.json();
-      return data;
+      return {
+        id: data.id,
+        fullname: data.fullname,
+        email: data.email,
+        createdAt: data.created_at,
+        updatedAt: data.updated_at
+      };
     }
   }
 

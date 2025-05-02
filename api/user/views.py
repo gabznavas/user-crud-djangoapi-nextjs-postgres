@@ -14,7 +14,14 @@ class UserListView(APIView):
 
     @permission_classes([IsAuthenticated])
     def get(self, request: Request) -> Response:
-        users_data = user_usecase.get_users()
+        try:
+            page = int(request.query_params.get('page', '1'))
+            page_size = int(request.query_params.get('page_size', '10'))
+        except ValueError:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        query = request.query_params.get('query', '')
+        users_data = user_usecase.get_users(page, page_size, query)
         return Response(users_data)
 
 

@@ -29,7 +29,6 @@ export default function useLogin() {
       if (response.ok) {
         const { token } = await response.json();
         setToken(token)
-
         setSuccess('Login realizado com sucesso');
         return true;
       } else {

@@ -1,3 +1,5 @@
+'use client';
+
 export default function useUserValidation() {
   const validateUser = (email: string, fullname: string, password: string): string | null => {
     const allowedDomains = ['gmail.com', 'hotmail.com']

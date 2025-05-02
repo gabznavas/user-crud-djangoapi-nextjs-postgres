@@ -1,18 +1,11 @@
 'use client'
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const tokenKey = 'token';
 
 export default function useToken() {
   const [token, setTokenState] = useState<string | null>(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem(tokenKey);
-    if (token) {
-      setTokenState(token);
-    }
-  }, []);
 
   const getToken = () => {
     const token = localStorage.getItem(tokenKey);

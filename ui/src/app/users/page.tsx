@@ -2,11 +2,26 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import useUser, { User } from '../hooks/use-user';
 
+import useUser, { User } from '../hooks/use-user';
+import { PaginatedList } from '../hooks/types';
+
+const DEFAULT_PAGE_SIZE = 5;
+const initialPaginatedUsers = (): PaginatedList<User> => ({
+  data: [],
+  page: 1,
+  pageSize: 10,
+  total: 0,
+  totalPages: 0,
+  hasNext: false,
+  hasPrevious: false,
+  next: null,
+  previous: null
+})
 
 export default function UsersPage() {
-  const [users, setUsers] = useState<User[]>([]);
+  const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
+  const [paginetedUsers, setPaginetedUsers] = useState<PaginatedList<User>>(initialPaginatedUsers());
   const router = useRouter();
 
   const [globalError, setGlobalError] = useState<string | null>(null);
@@ -17,24 +32,41 @@ export default function UsersPage() {
 
   useEffect(() => {
     (async () => {
-      const users = await getUsers();
-      setUsers(users);
+      const paginetedUsers: PaginatedList<User> = await getUsers(1, pageSize);
+      setPaginetedUsers(paginetedUsers);
     })()
   }, []);
 
   const handleDelete = async (id: number) => {
     if (!confirm('Tem certeza que deseja excluir este usuário?')) return;
-    deleteUser(id).then(() => {
-      setUsers(prev => prev.filter(user => user.id !== id));
+    deleteUser(id).then(async () => {
+      const paginatedUsers = initialPaginatedUsers();
+      const newPaginatedUsers: PaginatedList<User> = await getUsers(paginatedUsers.page, paginatedUsers.pageSize);
+      setPaginetedUsers(newPaginatedUsers);
+    }).catch((error) => {
+      if (error instanceof Error) {
+        setGlobalError(error.message);
+      } else {
+        setGlobalError('Erro ao excluir usuário');
+      }
     })
-      .catch((error) => {
-        if (error instanceof Error) {
-          setGlobalError(error.message);
-        } else {
-          setGlobalError('Erro ao excluir usuário');
-        }
-      })
   }
+
+  const handlePreviousPage = async (): Promise<void> => {
+    const newPaginatedUsers: PaginatedList<User> = await getUsers(paginetedUsers.previous ?? 1, pageSize);
+    setPaginetedUsers(newPaginatedUsers);
+  }
+
+  async function handleNextPage(): Promise<void> {
+    const newPaginatedUsers: PaginatedList<User> = await getUsers(paginetedUsers.next ?? 1, pageSize);
+    setPaginetedUsers(newPaginatedUsers);
+  }
+
+  async function handlePage(page: number): Promise<void> {
+    const paginetedUsers: PaginatedList<User> = await getUsers(page, pageSize);
+    setPaginetedUsers(paginetedUsers);
+  }
+
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
@@ -80,7 +112,7 @@ export default function UsersPage() {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {users.map((user) => (
+            {paginetedUsers.data.map((user) => (
               <tr key={user.id}>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {user.fullname}
@@ -107,6 +139,38 @@ export default function UsersPage() {
           </tbody>
         </table>
       </div>
+
+      {paginetedUsers.totalPages > 1 && (
+        // {/* TODO:  nos botões de proximo e anterior, 
+        //            adicionar para buscar o proximo bloco de usuarios */}
+        <div className='flex justify-center items-center gap-1.5 mt-4'>
+          <button
+            disabled={!paginetedUsers.previous}
+            className='cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700'
+            onClick={() => handlePreviousPage()}>
+            Anterior
+          </button>
+          <ul className='flex items-center gap-0.5'>
+            {Array.from({ length: paginetedUsers.totalPages }, (_, index) => (
+              <li className='cursor-pointer' key={index}>
+                <button
+                  className='disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700'
+                  disabled={index + 1 === paginetedUsers.page}
+                  onClick={() => handlePage(index + 1)}
+                >
+                  {index + 1}
+                </button>
+              </li>
+            ))}
+          </ul>
+          <button
+            disabled={!paginetedUsers.next}
+            className='cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700'
+            onClick={() => handleNextPage()}>
+            Próximo
+          </button>
+        </div>
+      )}
     </div>
   );
 }
