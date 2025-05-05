@@ -6,11 +6,11 @@ import { useRouter } from 'next/navigation';
 import useUser, { User } from '../hooks/use-user';
 import { PaginatedList } from '../hooks/types';
 
-const DEFAULT_PAGE_SIZE = 5;
+const DEFAULT_PAGE_SIZE = 10;
 const initialPaginatedUsers = (): PaginatedList<User> => ({
   data: [],
   page: 1,
-  pageSize: 10,
+  pageSize: DEFAULT_PAGE_SIZE,
   total: 0,
   totalPages: 0,
   hasNext: false,
@@ -21,7 +21,8 @@ const initialPaginatedUsers = (): PaginatedList<User> => ({
 
 export default function UsersPage() {
   const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
-  const [paginetedUsers, setPaginetedUsers] = useState<PaginatedList<User>>(initialPaginatedUsers());
+  const [paginetedUsers, setPaginetedUsers] =
+    useState<PaginatedList<User>>(initialPaginatedUsers());
   const router = useRouter();
 
   const [globalError, setGlobalError] = useState<string | null>(null);
@@ -57,118 +58,122 @@ export default function UsersPage() {
     setPaginetedUsers(newPaginatedUsers);
   }
 
-  async function handleNextPage(): Promise<void> {
+  const handleNextPage = async (): Promise<void> => {
     const newPaginatedUsers: PaginatedList<User> = await getUsers(paginetedUsers.next ?? 1, pageSize);
     setPaginetedUsers(newPaginatedUsers);
   }
 
-  async function handlePage(page: number): Promise<void> {
+  const handlePage = async (page: number): Promise<void> => {
     const paginetedUsers: PaginatedList<User> = await getUsers(page, pageSize);
     setPaginetedUsers(paginetedUsers);
   }
 
   return (
-    <div className="p-4">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Usuários</h1>
-        <button
-          onClick={() => router.push('/users/new')}
-          className="cursor-pointer bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
-        >
-          Novo Usuário
-        </button>
-      </div>
+    <div className="min-h-screen flex flex-col">
+      <div className="flex-grow p-4">
+        <div className='flex flex-col gap-4'>
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-2xl font-bold">Usuários</h1>
+            <button
+              onClick={() => router.push('/users/new')}
+              className="cursor-pointer bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+            >
+              Novo Usuário
+            </button>
+          </div>
 
-      {isLoading && <div className='bg-gray-100 p-4 rounded-md mb-4'>Carregando...</div>}
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {error}
-        </div>
-      )}
-      {success && (
-        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-          {success}
-        </div>
-      )}
-      {globalError && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {globalError}
-        </div>
-      )}
+          {isLoading && <div className='bg-gray-100 p-4 rounded-md mb-4'>Carregando...</div>}
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+              {error}
+            </div>
+          )}
+          {success && (
+            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+              {success}
+            </div>
+          )}
+          {globalError && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+              {globalError}
+            </div>
+          )}
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white rounded-md shadow-md border-collapse border border-gray-200">
-          <thead>
-            <tr>
-              <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Nome
-              </th>
-              <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Email
-              </th>
-              <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Ações
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {paginetedUsers.data.map((user) => (
-              <tr key={user.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {user.fullname}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {user.email}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <button
-                    onClick={() => router.push(`/users/${user.id}`)}
-                    className="cursor-pointer bg-amber-500 font-bold text-white px-4 py-2 rounded-md hover:bg-amber-600 mr-4"
-                  >
-                    Editar
-                  </button>
-                  <button
-                    onClick={() => handleDelete(user.id)}
-                    className="cursor-pointer bg-red-500 font-bold text-white px-4 py-2 rounded-md hover:bg-red-600"
-                  >
-                    Excluir
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-white rounded-md shadow-md border-collapse border border-gray-200">
+              <thead>
+                <tr>
+                  <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Nome
+                  </th>
+                  <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Email
+                  </th>
+                  <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Ações
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {paginetedUsers.data.map((user) => (
+                  <tr key={user.id}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {user.fullname}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {user.email}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <button
+                        onClick={() => router.push(`/users/${user.id}`)}
+                        className="cursor-pointer bg-amber-500 font-bold text-white px-4 py-2 rounded-md hover:bg-amber-600 mr-4"
+                      >
+                        Editar
+                      </button>
+                      <button
+                        onClick={() => handleDelete(user.id)}
+                        className="cursor-pointer bg-red-500 font-bold text-white px-4 py-2 rounded-md hover:bg-red-600"
+                      >
+                        Excluir
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
       {paginetedUsers.totalPages > 1 && (
-        // {/* TODO:  nos botões de proximo e anterior, 
-        //            adicionar para buscar o proximo bloco de usuarios */}
-        <div className='flex justify-center items-center gap-1.5 mt-4'>
-          <button
-            disabled={!paginetedUsers.previous}
-            className='cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700'
-            onClick={() => handlePreviousPage()}>
-            Anterior
-          </button>
-          <ul className='flex items-center gap-0.5'>
-            {Array.from({ length: paginetedUsers.totalPages }, (_, index) => (
-              <li className='cursor-pointer' key={index}>
-                <button
-                  className='disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700'
-                  disabled={index + 1 === paginetedUsers.page}
-                  onClick={() => handlePage(index + 1)}
-                >
-                  {index + 1}
-                </button>
-              </li>
-            ))}
-          </ul>
-          <button
-            disabled={!paginetedUsers.next}
-            className='cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700'
-            onClick={() => handleNextPage()}>
-            Próximo
-          </button>
+        <div className="sticky bottom-0 bg-white border-t border-gray-200 py-4 px-4">
+          <div className='flex justify-center items-center gap-1.5'>
+            <button
+              disabled={!paginetedUsers.previous}
+              className='cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700'
+              onClick={() => handlePreviousPage()}>
+              Anterior
+            </button>
+            <ul className='flex items-center gap-0.5'>
+              {Array.from({ length: paginetedUsers.totalPages }, (_, index) => (
+                <li className='cursor-pointer' key={index}>
+                  <button
+                    className='disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700'
+                    disabled={index + 1 === paginetedUsers.page}
+                    onClick={() => handlePage(index + 1)}
+                  >
+                    {index + 1}
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <button
+              disabled={!paginetedUsers.next}
+              className='cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700'
+              onClick={() => handleNextPage()}>
+              Próximo
+            </button>
+          </div>
         </div>
       )}
     </div>
