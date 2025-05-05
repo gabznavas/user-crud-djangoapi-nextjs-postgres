@@ -8,16 +8,23 @@ export default function Header() {
   const router = useRouter();
   const { isAuthenticated, logout } = useToken();
 
-  const { isLoading, error, success, getUserLogged } = useUser();
+  const { isLoading, getUserLogged } = useUser();
 
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      (async () => {
+    async function fetchUser() {
+      if (isAuthenticated) {
         const user = await getUserLogged();
         setUser(user);
-      })();
+      }
+    }
+
+    if (isAuthenticated) {
+      fetchUser().catch(() => {
+        logout();
+        router.push('/login');
+      });
     }
   }, [isAuthenticated]);
 

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import useToken from "./use-token";
 import { PaginatedList } from "./types";
+import { set } from "react-hook-form";
 
 export type User = {
   id: number;
@@ -84,8 +85,10 @@ export default function useUser() {
     if (!response.ok) {
       const data = await response.json();
       if (data.details) {
-        throw new Error(data.details);
+        setError(data.details);
+        throw new Error('Erro ao carregar usuário');
       } else {
+        setError('Erro ao carregar usuário');
         throw new Error('Erro ao carregar usuário');
       }
     } else {
