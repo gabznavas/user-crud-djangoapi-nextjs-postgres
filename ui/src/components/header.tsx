@@ -5,7 +5,7 @@ import useUser, { User } from '@/app/hooks/use-user';
 
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-
+import { UsersIcon } from 'lucide-react';
 export default function Header() {
   const router = useRouter();
   const { isAuthenticated, logout } = useToken();
@@ -40,7 +40,10 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="h-16 flex items-center justify-between">
           <div className="flex items-center">
-            <h1 className="text-xl font-bold text-gray-900">CRUD</h1>
+            <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+              <UsersIcon className='w-7 h-7' color='gray' />
+              Gerenciamento de Usuários
+            </h1>
           </div>
 
           <div className="flex items-center space-x-4">

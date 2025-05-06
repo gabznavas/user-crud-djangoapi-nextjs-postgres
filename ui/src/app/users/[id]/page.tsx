@@ -7,7 +7,8 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import useUser from '@/app/hooks/use-user';
 import useUserValidation from '@/app/hooks/use-user-validation';
-
+import { PencilIcon, PlusIcon, XIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 type UserForm = {
   fullname: string;
   email: string;
@@ -94,8 +95,14 @@ export default function UserFormPage({ params }: PageProps) {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">
-        {isNew ? 'Novo Usuário' : 'Editar Usuário'}
+      <h1 className="text-2xl font-bold mb-4 flex items-center gap-2">
+        {isNew ? <>
+          <PlusIcon className='w-6 h-6' />
+          Novo Usuário
+        </> : <>
+          <PencilIcon className='w-6 h-6' />
+          Editar Usuário
+        </>}
       </h1>
 
       {isLoading && <div className="bg-gray-100 p-4 rounded-md mb-4">Carregando...</div>}
@@ -168,21 +175,30 @@ export default function UserFormPage({ params }: PageProps) {
         </div>
 
         <div className="flex space-x-4">
-          <button
+          <Button
             type="submit"
+            variant="default"
             disabled={isLoading}
-            className="cursor-pointer bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 disabled:opacity-50"
+            className="cursor-pointer"
           >
-            {!isLoading && isNew ? 'Salvar' : 'Atualizar'}
+            {!isLoading && isNew ? <>
+              <PlusIcon className='w-4 h-4' />
+              Salvar
+            </> : <>
+              <PencilIcon className='w-4 h-4' />
+              Atualizar
+            </>}
             {isLoading && 'Salvando...'}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             onClick={() => router.push('/users')}
-            className="cursor-pointer bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300"
+            variant="outline"
+            className="cursor-pointer"
           >
+            <XIcon className='w-4 h-4' />
             Cancelar
-          </button>
+          </Button>
         </div>
       </form>
     </div>

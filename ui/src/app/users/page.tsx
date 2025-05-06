@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 
 import useUser, { User } from '../hooks/use-user';
 import { PaginatedList } from '../hooks/types';
+import { Button } from '@/components/ui/button';
+import { PencilIcon, PlusIcon, Trash2Icon, UsersIcon } from 'lucide-react';
 
 const DEFAULT_PAGE_SIZE = 10;
 const initialPaginatedUsers = (): PaginatedList<User> => ({
@@ -73,13 +75,17 @@ export default function UsersPage() {
       <div className="flex-grow p-4">
         <div className='flex flex-col gap-4'>
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold">Usuários</h1>
-            <button
+            <h1 className="text-2xl font-bold flex items-center gap-2">
+              <UsersIcon className='w-6 h-6' />
+              Usuários
+            </h1>
+            <Button
               onClick={() => router.push('/users/new')}
-              className="cursor-pointer bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+              className="cursor-pointer"
             >
+              <PlusIcon className='w-4 h-4' />
               Novo Usuário
-            </button>
+            </Button>
           </div>
 
           {isLoading && <div className='bg-gray-100 p-4 rounded-md mb-4'>Carregando...</div>}
@@ -124,18 +130,24 @@ export default function UsersPage() {
                       {user.email}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <button
-                        onClick={() => router.push(`/users/${user.id}`)}
-                        className="cursor-pointer bg-amber-500 font-bold text-white px-4 py-2 rounded-md hover:bg-amber-600 mr-4"
-                      >
-                        Editar
-                      </button>
-                      <button
-                        onClick={() => handleDelete(user.id)}
-                        className="cursor-pointer bg-red-500 font-bold text-white px-4 py-2 rounded-md hover:bg-red-600"
-                      >
-                        Excluir
-                      </button>
+                      <div className='flex gap-2'>
+                        <Button
+                          onClick={() => router.push(`/users/${user.id}`)}
+                          className="cursor-pointer"
+                          variant="outline"
+                        >
+                          <PencilIcon className='w-4 h-4' />
+                          Editar
+                        </Button>
+                        <Button
+                          onClick={() => handleDelete(user.id)}
+                          className="cursor-pointer"
+                          variant="outline"
+                        >
+                          <Trash2Icon className='w-4 h-4' />
+                          Excluir
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 ))}
