@@ -6,6 +6,7 @@ import Link from 'next/link';
 import useRegister from '../hooks/use-register';
 import { useState } from 'react';
 import useUserValidation from '../hooks/use-user-validation';
+import { Button } from '@/components/ui/button';
 
 type Form = {
   fullname: string;
@@ -126,13 +127,12 @@ export default function RegisterPage() {
             {error && <p className="text-red-500 p-2 bg-red-100 rounded-md mb-2">{error}</p>}
             {success && <p className="text-green-500 p-2 bg-green-100 rounded-md mb-2">{success}</p>}
             {globalError && <p className="text-red-500 p-2 bg-red-100 rounded-md mb-2">{globalError}</p>}
-            <button
+            <Button
               disabled={isLoading}
               type="submit"
-              className="cursor-pointer group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
+              className="w-full cursor-pointer">
               Registrar
-            </button>
+            </Button>
           </div>
         </form>
 

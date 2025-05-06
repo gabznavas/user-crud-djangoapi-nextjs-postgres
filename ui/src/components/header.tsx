@@ -1,9 +1,11 @@
 'use client';
 
+import useToken from '@/app/hooks/use-token';
+import useUser, { User } from '@/app/hooks/use-user';
+
 import { usePathname, useRouter } from 'next/navigation';
-import useToken from '../hooks/use-token';
-import useUser, { User } from '../hooks/use-user';
 import { useEffect, useState } from 'react';
+
 export default function Header() {
   const router = useRouter();
   const { isAuthenticated, logout } = useToken();

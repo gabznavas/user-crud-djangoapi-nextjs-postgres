@@ -1,7 +1,7 @@
 'use client'
 
+import Header from "@/components/header";
 import React from "react";
-import Header from "../components/header";
 
 export default function RegisterLayout({ children }: { children: React.ReactNode }) {
   React.useEffect(() => {
