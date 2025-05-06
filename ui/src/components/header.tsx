@@ -5,14 +5,20 @@ import useUser, { User } from '@/app/hooks/use-user';
 
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { UsersIcon } from 'lucide-react';
+import { LogOutIcon, UserIcon, UsersIcon, LogInIcon, UserPlusIcon } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
+import { DropdownMenuItem } from './ui/dropdown-menu';
+import { Button } from './ui/button';
+import Link from 'next/link';
+
 export default function Header() {
   const router = useRouter();
+  const pathname = usePathname();
+
   const { isAuthenticated, logout } = useToken();
-
   const { isLoading, getUserLogged } = useUser();
-
   const [user, setUser] = useState<User | null>(null);
+
 
   useEffect(() => {
     async function fetchUser() {
@@ -45,61 +51,61 @@ export default function Header() {
               Gerenciamento de Usuários
             </h1>
           </div>
-
           <div className="flex items-center space-x-4">
             {isAuthenticated ? (
-              <>
-                <span className="text-gray-600 italic ">
-                  {user && `Bem-vindo, ${user?.fullname}`}
-                  {isLoading && 'Carregando...'}
-                </span>
-                <button
-                  onClick={() => router.push('/users')}
-                  className="cursor-pointer text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-                >
-                  Usuários
-                </button>
-                <button
-                  onClick={handleLogout}
-                  className="cursor-pointer text-red-600 hover:text-red-900 px-3 py-2 rounded-md text-sm font-medium"
-                >
-                  Sair
-                </button>
-              </>
+              <DropdownMenu>
+                <DropdownMenuTrigger>
+                  <Button variant="outline" className='border-none bg-transparent cursor-pointer'>
+                    <UserIcon className='w-4 h-4' />
+                    {user && `Bem-vindo, ${user?.fullname}`}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className='w-56 bg-white mt-2'>
+                  <DropdownMenuItem className="cursor-pointer ">
+                    <Button
+                      onClick={() => router.push('/users')}
+                      variant="ghost"
+                      className='cursor-pointer w-full justify-start'>
+                      <UsersIcon className='w-4 h-4' />
+                      Usuários
+                    </Button>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">
+                    <Button
+                      onClick={handleLogout}
+                      variant="ghost"
+                      className='cursor-pointer w-full justify-start text-red-600'>
+                      <LogOutIcon className='w-4 h-4' color='red' />
+                      Sair
+                    </Button>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
-              <AuthButtons />
+              pathname === '/login'
+                ? (
+                  <Button
+                    onClick={() => router.push('/register')}
+                    className="cursor-pointer"
+                    variant="ghost"
+                  >
+                    <UserPlusIcon className='w-4 h-4' />
+                    <span className='text-indigo-600 hover:text-indigo-900'>Registrar</span>
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => router.push('/login')}
+                    className="cursor-pointer"
+                    variant="ghost"
+                  >
+                    <LogInIcon className='w-4 h-4' />
+                    <span className='text-indigo-600 hover:text-indigo-900'>Entre com sua conta</span>
+                  </Button>
+                )
             )}
           </div>
         </div>
       </div>
     </header>
   );
-}
-
-const AuthButtons = () => {
-  const router = useRouter();
-  const pathname = usePathname();
-
-  console.log(pathname);
-
-  if (pathname === '/login') {
-    return (
-      <button
-        onClick={() => router.push('/register')}
-        className="cursor-pointer text-indigo-600 hover:text-indigo-900 px-3 py-2 rounded-md text-sm font-medium"
-      >
-        Registrar
-      </button>
-    )
-  }
-
-
-  return (
-    <button
-      onClick={() => router.push('/login')}
-      className="cursor-pointer text-indigo-600 hover:text-indigo-900 px-3 py-2 rounded-md text-sm font-medium"
-    >
-      Entre com sua conta
-    </button>
-  )
 }

@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import useLogin from '../hooks/use-login';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-
+import { LogInIcon } from 'lucide-react';
 type Form = {
   email: string;
   password: string;
@@ -38,7 +38,8 @@ export default function LoginPage() {
     <div className="min-h-screen flex pt-12 justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          <h2 className="mt-6 text-3xl font-extrabold text-gray-900 flex justify-center items-center gap-2">
+            <LogInIcon className='w-7 h-7' />
             Entre na sua conta
           </h2>
         </div>
@@ -98,6 +99,7 @@ export default function LoginPage() {
               disabled={isLoading}
               type="submit"
               className="w-full cursor-pointer">
+              <LogInIcon className='w-4 h-4' />
               Entrar
             </Button>
           </div>
