@@ -2,10 +2,11 @@
 
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import useLogin from '../hooks/use-login';
 import Link from 'next/link';
+import { LogInIcon, Loader2 } from 'lucide-react';
+import useLogin from '../hooks/use-login';
 import { Button } from '@/components/ui/button';
-import { LogInIcon } from 'lucide-react';
+
 type Form = {
   email: string;
   password: string;
@@ -99,7 +100,11 @@ export default function LoginPage() {
               disabled={isLoading}
               type="submit"
               className="w-full cursor-pointer">
-              <LogInIcon className='w-4 h-4' />
+              {isLoading ? (
+                <Loader2 className='w-4 h-4 animate-spin' />
+              ) : (
+                <LogInIcon className='w-4 h-4' />
+              )}
               Entrar
             </Button>
           </div>

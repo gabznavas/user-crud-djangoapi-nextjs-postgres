@@ -3,17 +3,16 @@
 import useToken from '@/app/hooks/use-token';
 import useUser, { User } from '@/app/hooks/use-user';
 
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { LogOutIcon, UserIcon, UsersIcon, LogInIcon, UserPlusIcon } from 'lucide-react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
+import { LogOutIcon, UserIcon, UsersIcon, Loader2 } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { DropdownMenuItem } from './ui/dropdown-menu';
 import { Button } from './ui/button';
 import Link from 'next/link';
 
 export default function Header() {
   const router = useRouter();
-  const pathname = usePathname();
 
   const { isAuthenticated, logout } = useToken();
   const { isLoading, getUserLogged } = useUser();
@@ -51,20 +50,28 @@ export default function Header() {
               Gerenciamento de Usuários
             </h1>
           </div>
-          <div className="flex items-center space-x-4">
-            {isAuthenticated ? (
+          {isAuthenticated && (
+            <div className="flex items-center space-x-4">
               <DropdownMenu>
                 <DropdownMenuTrigger>
-                  <Button variant="outline" className='border-none bg-transparent cursor-pointer'>
-                    <UserIcon className='w-4 h-4' />
-                    {user && `Bem-vindo, ${user?.fullname}`}
-                  </Button>
+                  {isLoading ? (
+                    <Button variant="outline" className='border-none bg-transparent cursor-pointer'>
+                      <Loader2 className='w-4 h-4 animate-spin' />
+                    </Button>
+                  ) : (
+                    <Button variant="outline" className='border-none bg-transparent cursor-pointer'>
+                      <UserIcon className='w-4 h-4' />
+                      {user && `Bem-vindo, ${user?.fullname}`}
+                    </Button>
+
+                  )}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className='w-56 bg-white mt-2'>
                   <DropdownMenuItem className="cursor-pointer ">
                     <Button
                       onClick={() => router.push('/users')}
                       variant="ghost"
+                      disabled={isLoading}
                       className='cursor-pointer w-full justify-start'>
                       <UsersIcon className='w-4 h-4' />
                       Usuários
@@ -74,6 +81,7 @@ export default function Header() {
                     <Button
                       onClick={handleLogout}
                       variant="ghost"
+                      disabled={isLoading}
                       className='cursor-pointer w-full justify-start text-red-600'>
                       <LogOutIcon className='w-4 h-4' color='red' />
                       Sair
@@ -81,29 +89,8 @@ export default function Header() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            ) : (
-              pathname === '/login'
-                ? (
-                  <Button
-                    onClick={() => router.push('/register')}
-                    className="cursor-pointer"
-                    variant="ghost"
-                  >
-                    <UserPlusIcon className='w-4 h-4' />
-                    <span className='text-indigo-600 hover:text-indigo-900'>Registrar</span>
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={() => router.push('/login')}
-                    className="cursor-pointer"
-                    variant="ghost"
-                  >
-                    <LogInIcon className='w-4 h-4' />
-                    <span className='text-indigo-600 hover:text-indigo-900'>Entre com sua conta</span>
-                  </Button>
-                )
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </header>

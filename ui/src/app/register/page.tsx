@@ -7,7 +7,7 @@ import useRegister from '../hooks/use-register';
 import { useState } from 'react';
 import useUserValidation from '../hooks/use-user-validation';
 import { Button } from '@/components/ui/button';
-import { UserPlusIcon } from 'lucide-react';
+import { UserPlusIcon, Loader2 } from 'lucide-react';
 type Form = {
   fullname: string;
   email: string;
@@ -132,7 +132,11 @@ export default function RegisterPage() {
               disabled={isLoading}
               type="submit"
               className="w-full cursor-pointer">
-              <UserPlusIcon className='w-4 h-4' />
+              {isLoading ? (
+                <Loader2 className='w-4 h-4 animate-spin' />
+              ) : (
+                <UserPlusIcon className='w-4 h-4' />
+              )}
               Registrar
             </Button>
           </div>
