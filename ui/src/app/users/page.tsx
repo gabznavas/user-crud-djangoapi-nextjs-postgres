@@ -73,8 +73,8 @@ export default function UsersPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <div className="flex-grow p-4">
+    <div className="flex flex-col">
+      <div className="flex-grow">
         <div className='flex flex-col gap-4'>
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-2xl font-bold flex items-center gap-2">
@@ -160,7 +160,7 @@ export default function UsersPage() {
       </div>
 
       {paginetedUsers.totalPages > 1 && (
-        <div className="sticky bottom-0 bg-white border-t border-gray-200 py-4 px-4">
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-4 px-4">
           <div className='flex justify-center items-center gap-1.5'>
             <Button
               disabled={!paginetedUsers.previous}
