@@ -5,11 +5,11 @@ services:
     env_file:
       - .env
     environment:
-      POSTGRES_USER: ${DB_USER:-postgres}
-      POSTGRES_DB: ${DB_NAME:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres123}
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: postgres123
     ports:
-      - "${DB_PORT:-5432}:5432"
+      - "5432:5432"
     volumes:
       - pgdatabase_data:/var/lib/postgresql/data
     restart: always
@@ -36,7 +36,9 @@ services:
     env_file:
       - .env
     ports:
-      - "${REDIS_PORT:-6379}:6379"
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
 
   redis-commander:
     container_name: redis-commander
@@ -46,7 +48,7 @@ services:
     env_file:
       - .env
     environment:
-      - REDIS_HOSTS=local:redis:${REDIS_PORT:-6379}
+      - REDIS_HOSTS=local:redis:6379
     ports:
       - "8081:8081"
 

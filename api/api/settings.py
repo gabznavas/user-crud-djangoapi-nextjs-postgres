@@ -93,6 +93,7 @@ DATABASES = {
     },
 }
 
+# Configuração do Redis
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
@@ -103,6 +104,9 @@ CACHES = {
         },
     }
 }
+
+# Configuração do Celery
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'amqp://guest:guest@localhost:5672//')
 
 
 

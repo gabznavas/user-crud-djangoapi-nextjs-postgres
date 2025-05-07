@@ -6,7 +6,7 @@ import jwt
 from django.conf import settings
 from datetime import datetime, timedelta
 from django.core.cache import cache
-
+from custom_auth.tasks import handle_new_user_event
 class AuthUseCase:
     def login(self, data: dict) -> tuple[str, dict]:
         serializer = LoginSerializer(data=data)
@@ -40,11 +40,12 @@ class AuthUseCase:
         user.set_password(user_data['password'])
         user.save()
     
-        user: dict = serializer.validated_data
         token_jwt = self.__get_jwt_token(user_data)
 
         keys = cache.keys(f"get_users*")
         cache.delete_many(keys)
+
+        handle_new_user_event.apply_async(args=[user.id, user.email], task_name="user_created")
 
         return token_jwt, None
 
