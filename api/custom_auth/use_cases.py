@@ -45,7 +45,7 @@ class AuthUseCase:
         keys = cache.keys(f"get_users*")
         cache.delete_many(keys)
 
-        handle_new_user_event.apply_async(args=[user.id, user.email], task_name="user_created")
+        handle_new_user_event.apply_async(args=[user.id, user.email])
 
         return token_jwt, None
 

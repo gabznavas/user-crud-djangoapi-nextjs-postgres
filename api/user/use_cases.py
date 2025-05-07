@@ -5,7 +5,7 @@ from django.core.paginator import Paginator
 from django.core.paginator import Page
 from django.core.cache import cache
 
-class UserManagementUseCase:
+class GetUsersUseCase:
     def get_users(self, page: int, page_size: int, query: str) -> list[dict]:   
         key_redis = f'get_users:data:{page}:{page_size}:{query}'
         redis_cache = cache.get(key_redis)
@@ -71,6 +71,7 @@ class UserManagementUseCase:
 
         return data
 
+class UpdateUserUseCase:
     def update_user(self, user_id: int, user_data: dict) -> dict | None:
         try:
             user: User = User.objects.get(pk=user_id)
@@ -103,6 +104,7 @@ class UserManagementUseCase:
 
         return None
 
+class DeleteUserUseCase:
     def delete_user(self, user_id: int) -> dict | None:
         try:
             user: User = User.objects.get(pk=user_id)

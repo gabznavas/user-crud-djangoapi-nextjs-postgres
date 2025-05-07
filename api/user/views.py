@@ -2,12 +2,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
-from .use_cases import UserManagementUseCase
+from .use_cases import GetUsersUseCase, UpdateUserUseCase, DeleteUserUseCase
 from custom_auth.authentication import JWTAuthentication
 from custom_auth.permissions import IsAuthenticated, IsAdmin
-from rest_framework.decorators import permission_classes, authentication_classes
+from rest_framework.decorators import permission_classes
 
-user_usecase = UserManagementUseCase()
+get_users_usecase = GetUsersUseCase()
+update_user_usecase = UpdateUserUseCase()
+delete_user_usecase = DeleteUserUseCase()
 
 class UserListView(APIView):
     authentication_classes = [JWTAuthentication]
@@ -21,7 +23,7 @@ class UserListView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         query = request.query_params.get('query', '')
-        users_data = user_usecase.get_users(page, page_size, query)
+        users_data = get_users_usecase.get_users(page, page_size, query)
         return Response(users_data)
 
 
@@ -30,7 +32,7 @@ class UserGetLoggedView(APIView):
 
     @permission_classes([IsAuthenticated])
     def get(self, request: Request) -> Response:
-        user = user_usecase.get_user(request.user.id)
+        user = get_users_usecase.get_user(request.user.id)
         
         if user is None:
             return Response(status=status.HTTP_404_NOT_FOUND)
@@ -41,8 +43,8 @@ class UserGetUpdateDeleteView(APIView):
     authentication_classes = [JWTAuthentication]
 
     @permission_classes([IsAuthenticated])
-    def get(self, request: Request, id: int) -> Response:
-        user = user_usecase.get_user(id)
+    def get(self, _: Request, id: int) -> Response:
+        user = get_users_usecase.get_user(id)
         
         if user is None:
             return Response(status=status.HTTP_404_NOT_FOUND)
@@ -50,15 +52,15 @@ class UserGetUpdateDeleteView(APIView):
 
     @permission_classes([IsAuthenticated])
     def put(self, request: Request, id: int) -> Response:
-        errors = user_usecase.update_user(id, request.data)
+        errors = update_user_usecase.update_user(id, request.data)
         if errors is not None:
             return Response(errors, status=status.HTTP_400_BAD_REQUEST)
        
         return Response(status=status.HTTP_204_NO_CONTENT)
     
     @permission_classes([IsAdmin])
-    def delete(self, request: Request, id: int) -> Response:
-        errors = user_usecase.delete_user(id)
+    def delete(self, _: Request, id: int) -> Response:
+        errors = delete_user_usecase.delete_user(id)
         if errors is not None:
             return Response(errors, status=status.HTTP_404_NOT_FOUND)
         return Response(status=status.HTTP_204_NO_CONTENT)
