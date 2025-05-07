@@ -1,6 +1,5 @@
 'use client';
 
-import useToken from '@/app/hooks/use-token';
 import useUser, { User } from '@/app/hooks/use-user';
 
 import { useRouter } from 'next/navigation';
@@ -47,7 +46,8 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="h-16 flex items-center justify-between">
           <div className="flex items-center">
-            <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+            <h1 className="text-xl font-bold text-gray-900 
+            flex items-center gap-2">
               <UsersIcon className='w-7 h-7' color='gray' />
               Gerenciamento de Usuários
             </h1>
@@ -59,33 +59,42 @@ export default function Header() {
                   {isLoading ? (
                     <Link
                       href="/login"
-                      className='border-none bg-transparent cursor-pointer'>
+                      className='outline-none border-none bg-transparent 
+                      cursor-pointer flex items-center gap-2
+                       hover:bg-gray-100 px-3 py-2 rounded-md'>
                       <Loader2 className='w-4 h-4 animate-spin' />
                     </Link>
                   ) : (
                     <Link
                       href="/login"
-                      className='border-none bg-transparent cursor-pointer'>
+                      className='outline-none border-none bg-transparent 
+                      cursor-pointer flex items-center gap-2
+                       hover:bg-gray-100 px-3 py-2 rounded-md'>
                       <UserIcon className='w-4 h-4' />
                       {user && `Bem-vindo, ${user?.fullname}`}
                     </Link>
-
                   )}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className='w-56 bg-white mt-2'>
                   <DropdownMenuItem className="cursor-pointer ">
                     <Link
                       href="/users"
-                      className='cursor-pointer w-full justify-start'>
+                      className='cursor-pointer w-full justify-start flex 
+                      items-center gap-2 hover:bg-gray-100 px-3
+                       py-2 rounded-md'>
                       <UsersIcon className='w-4 h-4' />
                       Usuários
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer" onClick={handleLogout}>
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={handleLogout}>
                     <Link
                       href="/login"
-                      className='cursor-pointer w-full justify-start text-red-600'>
-                      <LogOutIcon className='w-4 h-4' color='red' />
+                      className='cursor-pointer w-full justify-start
+                       flex items-center gap-2
+                        hover:bg-gray-100 px-3 py-2 rounded-md'>
+                      <LogOutIcon className='w-4 h-4' />
                       Sair
                     </Link>
                   </DropdownMenuItem>

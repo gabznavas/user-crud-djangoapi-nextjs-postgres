@@ -22,7 +22,6 @@ export default function useUser() {
 
   const getUsers = useCallback(async (page: number = 1, pageSize: number = 10, query: string = ''): Promise<PaginatedList<User>> => {
     setIsLoading(true);
-    debugger
     try {
       const url =
         `${process.env.NEXT_PUBLIC_API_URL}/user?page=${page}&page_size=${pageSize}&query=${query}`;
