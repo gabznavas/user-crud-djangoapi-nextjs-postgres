@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate
 import jwt
 from django.conf import settings
 from datetime import datetime, timedelta
-
+from django.core.cache import cache
 
 class AuthUseCase:
     def login(self, data: dict) -> tuple[str, dict]:
@@ -42,8 +42,14 @@ class AuthUseCase:
     
         user: dict = serializer.validated_data
         token_jwt = self.__get_jwt_token(user_data)
+
+        self.__delete_cache_with_prefix("get_users")
+
         return token_jwt, None
-    
+
+    def __delete_cache_with_prefix(self,prefix: str):
+        keys = cache.keys(f"{prefix}*")
+        cache.delete_many(keys)
 
     def __get_jwt_token(self, user: dict) -> str:
         jwt_payload = {

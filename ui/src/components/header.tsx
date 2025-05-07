@@ -19,7 +19,6 @@ export default function Header() {
   const { isLoading, getUserLogged } = useUser();
   const [user, setUser] = useState<User | null>(null);
 
-
   useEffect(() => {
     async function fetchUser() {
       if (isAuthenticated) {
