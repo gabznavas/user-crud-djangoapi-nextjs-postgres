@@ -2,10 +2,8 @@
 
 export default function useUserValidation() {
   const validateUser = (email: string, fullname: string, password: string): string | null => {
-    const allowedDomains = ['gmail.com', 'hotmail.com']
-    const emailDomain = email.split('@')[1];
-    if (!allowedDomains.includes(emailDomain)) {
-      return 'Domínio de email não permitido.';
+    if (email.length > 50) {
+      return 'O email deve ter no máximo 50 caracteres';
     }
 
     if (password.length < 8) {

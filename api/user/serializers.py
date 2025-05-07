@@ -24,20 +24,10 @@ class UserSerializer(serializers.Serializer):
     password = serializers.CharField(required=True)
     fullname = serializers.CharField(max_length=200, required=True)
 
-    allowed_domains = ['gmail.com', 'hotmail.com']
-
     def validate_password(self, value):
         if len(value) < min_password_length:
             raise serializers.ValidationError(f"Password must be at least {min_password_length} characters long")
         return value
-    
-    def validate_email(self, email):
-        domain = email.split('@')[1]
-        
-        if domain not in self.allowed_domains:
-            raise serializers.ValidationError(f"Email domain not allowed. Allowed domains: {', '.join(self.allowed_domains)}")
-        
-        return email
     
     def validate_fullname(self, fullname):
         if len(fullname.split(' ')) < 2:
