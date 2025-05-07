@@ -3,14 +3,19 @@ from .serializers import UserModelSerializer, UserSerializer
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.core.paginator import Page
+from django.core.cache import cache
+
 class UserManagementUseCase:
-    def get_users(self, page: int, page_size: int, query: str) -> list[dict]:
+    def get_users(self, page: int, page_size: int, query: str) -> list[dict]:   
+        key_redis = f'get_users:data:{page}:{page_size}:{query}'
+        redis_cache = cache.get(key_redis)
+        if redis_cache is not None:
+            return redis_cache
+
         users_query = User.objects.filter(is_active=True)
         if query:
             users_query = users_query.filter(Q(fullname__icontains=query) | Q(email__icontains=query))
         users_query = users_query.order_by('-created_at')
-        
-        print("Query antes do Paginator:", str(users_query.query))
         
         paginator = Paginator(users_query, page_size)
         
@@ -23,9 +28,9 @@ class UserManagementUseCase:
             print("Query após page():", str(page_obj.object_list.query))
             
             serializer = UserModelSerializer(page_obj.object_list, many=True)
-            
-            return self.build_response(serializer.data, page_obj, page_size, user_count, paginator)
-           
+            data= self.build_response(serializer.data, page_obj, page_size, user_count, paginator)
+            cache.set(key_redis, data)
+            return data
         except:
             # Se a página não existir, retorna a primeira página
             page_obj = paginator.page(1)

@@ -1,7 +1,9 @@
 services:
-  db:
+  db-api:
     image: postgres:16
     container_name: django-api-db
+    env_file:
+      - .env
     environment:
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_DB: ${DB_NAME:-postgres}
@@ -16,7 +18,9 @@ services:
     image: dpage/pgadmin4
     container_name: django-api-pgadmin
     depends_on:
-      - db
+      - db-api
+    env_file:
+      - .env
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin@example.com}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-pgadmin123}
@@ -25,6 +29,28 @@ services:
     volumes:
       - pgadmin_data:/var/lib/pgadmin
 
+  redis:
+    container_name: redis
+    hostname: redis
+    image: redis
+    env_file:
+      - .env
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+
+  redis-commander:
+    container_name: redis-commander
+    hostname: redis-commander
+    image: rediscommander/redis-commander:latest
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - REDIS_HOSTS=local:redis:${REDIS_PORT:-6379}
+    ports:
+      - "8081:8081"
+
 volumes:
   pgdatabase_data:
   pgadmin_data:
+  redis_data:

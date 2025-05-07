@@ -1,14 +1,14 @@
 'use client';
 
 import { useState } from "react";
-import useToken from "./use-token";
+import { useAuth } from "../contexts/auth-context";
 
 export default function useLogin() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  const { setToken } = useToken();
+  const { setToken } = useAuth();
 
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);

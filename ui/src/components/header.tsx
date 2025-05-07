@@ -6,15 +6,17 @@ import useUser, { User } from '@/app/hooks/use-user';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { LogOutIcon, UserIcon, UsersIcon, Loader2 } from 'lucide-react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuTrigger
+} from '@radix-ui/react-dropdown-menu';
 import { DropdownMenuItem } from './ui/dropdown-menu';
-import { Button } from './ui/button';
 import Link from 'next/link';
+import { useAuth } from '@/app/contexts/auth-context';
 
 export default function Header() {
   const router = useRouter();
 
-  const { isAuthenticated, logout } = useToken();
+  const { isAuthenticated, logout } = useAuth();
   const { isLoading, getUserLogged } = useUser();
   const [user, setUser] = useState<User | null>(null);
 
@@ -55,37 +57,37 @@ export default function Header() {
               <DropdownMenu>
                 <DropdownMenuTrigger>
                   {isLoading ? (
-                    <Button variant="outline" className='border-none bg-transparent cursor-pointer'>
+                    <Link
+                      href="/login"
+                      className='border-none bg-transparent cursor-pointer'>
                       <Loader2 className='w-4 h-4 animate-spin' />
-                    </Button>
+                    </Link>
                   ) : (
-                    <Button variant="outline" className='border-none bg-transparent cursor-pointer'>
+                    <Link
+                      href="/login"
+                      className='border-none bg-transparent cursor-pointer'>
                       <UserIcon className='w-4 h-4' />
                       {user && `Bem-vindo, ${user?.fullname}`}
-                    </Button>
+                    </Link>
 
                   )}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className='w-56 bg-white mt-2'>
                   <DropdownMenuItem className="cursor-pointer ">
-                    <Button
-                      onClick={() => router.push('/users')}
-                      variant="ghost"
-                      disabled={isLoading}
+                    <Link
+                      href="/users"
                       className='cursor-pointer w-full justify-start'>
                       <UsersIcon className='w-4 h-4' />
                       Usuários
-                    </Button>
+                    </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">
-                    <Button
-                      onClick={handleLogout}
-                      variant="ghost"
-                      disabled={isLoading}
+                  <DropdownMenuItem className="cursor-pointer" onClick={handleLogout}>
+                    <Link
+                      href="/login"
                       className='cursor-pointer w-full justify-start text-red-600'>
                       <LogOutIcon className='w-4 h-4' color='red' />
                       Sair
-                    </Button>
+                    </Link>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

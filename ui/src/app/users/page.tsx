@@ -7,6 +7,8 @@ import useUser, { User } from '../hooks/use-user';
 import { PaginatedList } from '../hooks/types';
 import { Button } from '@/components/ui/button';
 import { PencilIcon, PlusIcon, Trash2Icon, UsersIcon } from 'lucide-react';
+import ProtectedRoute from '@/components/protected-route';
+import { useAuth } from '../contexts/auth-context';
 
 const DEFAULT_PAGE_SIZE = 10;
 const initialPaginatedUsers = (): PaginatedList<User> => ({
@@ -160,31 +162,31 @@ export default function UsersPage() {
       {paginetedUsers.totalPages > 1 && (
         <div className="sticky bottom-0 bg-white border-t border-gray-200 py-4 px-4">
           <div className='flex justify-center items-center gap-1.5'>
-            <button
+            <Button
               disabled={!paginetedUsers.previous}
-              className='cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700'
+              className='cursor-pointer'
               onClick={() => handlePreviousPage()}>
               Anterior
-            </button>
+            </Button>
             <ul className='flex items-center gap-0.5'>
               {Array.from({ length: paginetedUsers.totalPages }, (_, index) => (
                 <li className='cursor-pointer' key={index}>
-                  <button
-                    className='disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700'
+                  <Button
+                    variant='outline'
                     disabled={index + 1 === paginetedUsers.page}
                     onClick={() => handlePage(index + 1)}
                   >
                     {index + 1}
-                  </button>
+                  </Button>
                 </li>
               ))}
             </ul>
-            <button
+            <Button
               disabled={!paginetedUsers.next}
-              className='cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700'
+              className='cursor-pointer'
               onClick={() => handleNextPage()}>
               Próximo
-            </button>
+            </Button>
           </div>
         </div>
       )}

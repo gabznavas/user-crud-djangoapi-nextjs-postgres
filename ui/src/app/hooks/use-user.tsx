@@ -1,9 +1,8 @@
 'use client';
 
-import { useState } from "react";
-import useToken from "./use-token";
-import { PaginatedList } from "./types";
-import { set } from "react-hook-form";
+import { useCallback, useState } from "react";
+import { useAuth } from "../contexts/auth-context";
+import { initialPaginatedList, PaginatedList } from "./types";
 
 export type User = {
   id: number;
@@ -19,10 +18,11 @@ export default function useUser() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  const { token } = useToken();
+  const { token } = useAuth();
 
-  const getUsers = async (page: number = 1, pageSize: number = 10, query: string = ''): Promise<PaginatedList<User>> => {
+  const getUsers = useCallback(async (page: number = 1, pageSize: number = 10, query: string = ''): Promise<PaginatedList<User>> => {
     setIsLoading(true);
+    debugger
     try {
       const url =
         `${process.env.NEXT_PUBLIC_API_URL}/user?page=${page}&page_size=${pageSize}&query=${query}`;
@@ -71,9 +71,9 @@ export default function useUser() {
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [token])
 
-  const getUser = async (id: string): Promise<User> => {
+  const getUser = useCallback(async (id: string): Promise<User> => {
     const url = `${process.env.NEXT_PUBLIC_API_URL}/user/${id}`;
     const response = await fetch(url, {
       headers: {
@@ -101,9 +101,9 @@ export default function useUser() {
         updatedAt: data.updated_at
       };
     }
-  }
+  }, [token])
 
-  const getUserLogged = async (): Promise<User> => {
+  const getUserLogged = useCallback(async (): Promise<User> => {
     const url = `${process.env.NEXT_PUBLIC_API_URL}/user/logged/`;
     const response = await fetch(url, {
       headers: {
@@ -123,9 +123,9 @@ export default function useUser() {
       const data = await response.json();
       return data;
     }
-  }
+  }, [token])
 
-  const createUser = async (email: string, fullname: string, password: string): Promise<void> => {
+  const createUser = useCallback(async (email: string, fullname: string, password: string): Promise<void> => {
     reset()
 
     const url = `${process.env.NEXT_PUBLIC_API_URL}/register/`;
@@ -154,9 +154,9 @@ export default function useUser() {
       reset()
       setSuccess('Usuário criado com sucesso');
     }
-  }
+  }, [token])
 
-  const updateUser = async (id: string, email: string, fullname: string, password: string): Promise<void> => {
+  const updateUser = useCallback(async (id: string, email: string, fullname: string, password: string): Promise<void> => {
     reset()
 
     const url = `${process.env.NEXT_PUBLIC_API_URL}/user/${id}/`;
@@ -185,9 +185,9 @@ export default function useUser() {
       reset()
       setSuccess('Usuário atualizado com sucesso');
     }
-  }
+  }, [token])
 
-  const deleteUser = async (id: number): Promise<void> => {
+  const deleteUser = useCallback(async (id: number): Promise<void> => {
     reset()
 
     const url = `${process.env.NEXT_PUBLIC_API_URL}/user/${id}/`;
@@ -209,7 +209,7 @@ export default function useUser() {
       reset()
       setSuccess('Usuário excluído com sucesso');
     }
-  }
+  }, [token])
 
   const reset = () => {
     setIsLoading(false);
