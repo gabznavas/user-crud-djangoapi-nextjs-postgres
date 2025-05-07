@@ -173,6 +173,7 @@ export default function UsersPage() {
                 <li className='cursor-pointer' key={index}>
                   <Button
                     variant='outline'
+                    className='cursor-pointer'
                     disabled={index + 1 === paginetedUsers.page}
                     onClick={() => handlePage(index + 1)}
                   >
