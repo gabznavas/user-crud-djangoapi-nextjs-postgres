@@ -40,6 +40,10 @@ export default function UserFormPage({ params }: PageProps) {
   } = useForm<UserForm>();
 
   useEffect(() => {
+    document.title = isNew ? 'Novo Usuário' : 'Editar Usuário'
+  }, [isNew])
+
+  useEffect(() => {
     if (!isNew) {
       getUser(id).then((user) => {
         setValue('fullname', user.fullname);

@@ -52,6 +52,11 @@ class UserManagementUseCase:
         }
 
     def get_user(self, user_id: int) -> dict:
+        key_redis = f'get_user:{user_id}'
+        redis_cache = cache.get(key_redis)
+        if redis_cache is not None:
+            return redis_cache
+
         try:
             user: User = User.objects.get(pk=user_id)
             if not user.is_active:
@@ -60,7 +65,11 @@ class UserManagementUseCase:
             return None
         
         serializer = UserModelSerializer(user)
-        return serializer.data
+        
+        data = serializer.data
+        cache.set(key_redis, data)
+
+        return data
 
     def update_user(self, user_id: int, user_data: dict) -> dict | None:
         try:
@@ -86,6 +95,12 @@ class UserManagementUseCase:
         user.set_password(user_data['password'])
         user.save()
 
+        data = serializer.data
+        key_redis = f'get_user:{user_id}'
+        cache.set(key_redis, data)
+
+        self.__delete_cache_get_users()
+
         return None
 
     def delete_user(self, user_id: int) -> dict | None:
@@ -101,4 +116,16 @@ class UserManagementUseCase:
         
         user.is_active = False
         user.save()
+
+        self.__delete_cache_get_user(user_id)
+        self.__delete_cache_get_users()
+
         return None 
+    
+    def __delete_cache_get_users(self):
+        keys = cache.keys("get_users*")
+        cache.delete_many(keys)
+
+    def __delete_cache_get_user(self, user_id: int):
+        key_redis = f'get_user:{user_id}'
+        cache.delete(key_redis)

@@ -43,13 +43,11 @@ class AuthUseCase:
         user: dict = serializer.validated_data
         token_jwt = self.__get_jwt_token(user_data)
 
-        self.__delete_cache_with_prefix("get_users")
+        keys = cache.keys(f"get_users*")
+        cache.delete_many(keys)
 
         return token_jwt, None
 
-    def __delete_cache_with_prefix(self,prefix: str):
-        keys = cache.keys(f"{prefix}*")
-        cache.delete_many(keys)
 
     def __get_jwt_token(self, user: dict) -> str:
         jwt_payload = {
