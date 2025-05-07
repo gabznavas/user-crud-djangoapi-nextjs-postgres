@@ -33,7 +33,7 @@ export default function Header() {
         router.push('/login');
       });
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, getUserLogged, logout, router]);
 
   const handleLogout = () => {
     logout();

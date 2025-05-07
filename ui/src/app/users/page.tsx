@@ -7,8 +7,6 @@ import useUser, { User } from '../hooks/use-user';
 import { PaginatedList } from '../hooks/types';
 import { Button } from '@/components/ui/button';
 import { PencilIcon, PlusIcon, Trash2Icon, UsersIcon } from 'lucide-react';
-import ProtectedRoute from '@/components/protected-route';
-import { useAuth } from '../contexts/auth-context';
 
 const DEFAULT_PAGE_SIZE = 10;
 const initialPaginatedUsers = (): PaginatedList<User> => ({
@@ -24,7 +22,7 @@ const initialPaginatedUsers = (): PaginatedList<User> => ({
 })
 
 export default function UsersPage() {
-  const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
+  const [pageSize] = useState<number>(DEFAULT_PAGE_SIZE);
   const [paginetedUsers, setPaginetedUsers] =
     useState<PaginatedList<User>>(initialPaginatedUsers());
   const router = useRouter();
@@ -40,7 +38,7 @@ export default function UsersPage() {
       const paginetedUsers: PaginatedList<User> = await getUsers(1, pageSize);
       setPaginetedUsers(paginetedUsers);
     })()
-  }, []);
+  }, [getUsers, pageSize]);
 
   const handleDelete = async (id: number) => {
     if (!confirm('Tem certeza que deseja excluir este usuário?')) return;

@@ -52,7 +52,7 @@ export default function UserFormPage({ params }: PageProps) {
         setFocus('fullname')
       })
     }
-  }, [getUser, setValue, isNew, id]);
+  }, [setFocus, getUser, setValue, isNew, id]);
 
   const resetForm = () => {
     setGlobalError(null)

@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { useAuth } from "../contexts/auth-context";
-import { initialPaginatedList, PaginatedList } from "./types";
+import { PaginatedList } from "./types";
 
 export type User = {
   id: number;

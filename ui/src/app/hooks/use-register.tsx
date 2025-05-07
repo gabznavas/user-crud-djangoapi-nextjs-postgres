@@ -39,7 +39,7 @@ export default function useRegister() {
         }
         return false;
       }
-    } catch (error) {
+    } catch {
       setError('Erro ao registrar usuário');
       return false;
     } finally {
